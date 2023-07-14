@@ -586,6 +586,7 @@ class _YahooFinance(object):
             "path": "https://query2.finance.yahoo.com/v10/finance/quoteSummary/{symbol}",
             "response_field": "quoteSummary",
             "query": {
+                "crumb": {"required": True, "default": None},
                 "formatted": {"required": False, "default": False},
                 "modules": {
                     "required": True,

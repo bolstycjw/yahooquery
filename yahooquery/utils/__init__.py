@@ -79,6 +79,8 @@ def _init_session(session=None, **kwargs):
         if kwargs.get("headers") and isinstance(kwargs.get("headers"), dict):
             session_headers.update(**headers)
         session.headers.update(**session_headers)
+        if kwargs.get("cookies"):
+            [session.cookies.set(c["name"], c["value"]) for c in kwargs.get("cookies")]
     return session
 
 
