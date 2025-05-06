@@ -24,6 +24,7 @@ requires = [
     "pandas >=0.24.0",
     "requests-futures >=1.0.0",
     "tqdm >=4.54.1",
+    "curl_cffi >=0.11.0b1",
 ]
 description-file = "README.md"
 

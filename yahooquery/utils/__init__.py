@@ -3,7 +3,7 @@ import random
 import re
 
 import pandas as pd
-from requests import Session
+from curl_cffi import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from requests_futures.sessions import FuturesSession
@@ -53,22 +53,11 @@ def _init_session(session=None, **kwargs):
         if kwargs.get("asynchronous"):
             session = FuturesSession(max_workers=kwargs.get("max_workers", 8))
         else:
-            session = Session()
+            session = Session(impersonate="chrome")
         if kwargs.get("proxies"):
             session.proxies = kwargs.get("proxies")
-        retries = Retry(
-            total=kwargs.get("retry", 5),
-            backoff_factor=kwargs.get("backoff_factor", 0.3),
-            status_forcelist=kwargs.get("status_forcelist", [429, 500, 502, 503, 504]),
-        )
         if kwargs.get("verify") is not None:
             session.verify = kwargs.get("verify")
-        session.mount(
-            "https://",
-            TimeoutHTTPAdapter(
-                max_retries=retries, timeout=kwargs.get("timeout", DEFAULT_TIMEOUT)
-            ),
-        )
         # TODO: Figure out how to utilize this within the validate_response
         # TODO: This will be a much better way of handling bad requests than
         # TODO: what I'm currently doing.
@@ -169,7 +158,7 @@ def _event_as_srs(event_data, event):
         values = [d["amount"] for d in event_data.values()]
     else:
         values = [
-            d["numerator"] / d["denominator"] if d["denominator"] else float('inf')
+            d["numerator"] / d["denominator"] if d["denominator"] else float("inf")
             for d in event_data.values()
         ]
     return pd.Series(values, index=index)
@@ -184,7 +173,7 @@ def _history_dataframe(data, daily, adj_timezone=True):
         data_dict["adjclose"] = data["indicators"]["adjclose"][0]["adjclose"]
         cols.append("adjclose")
 
-    if 'events' in data:
+    if "events" in data:
         for event, event_data in data["events"].items():
             if event not in ("dividends", "splits"):
                 continue
